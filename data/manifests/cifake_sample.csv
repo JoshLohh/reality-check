@@ -1,0 +1,41 @@
+image_path,label,source_dataset,generator,split,license_notes
+data/raw/cifake/archive/train/REAL/1106 (4).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/2446 (5).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/2630 (7).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/4609 (6).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/2921 (4).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/5593 (2).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/0223 (2).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/3759 (10).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/3719 (10).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/5137 (5).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/4440 (8).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/0454 (8).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/3637 (10).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/2710 (8).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/1190 (6).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/2998 (6).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/3839 (8).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/4403 (10).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/0643 (2).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/1462 (8).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/4406.jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/4496 (6).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/3646 (6).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/3061 (3).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/3988 (8).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/1772 (8).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/2439 (3).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/1554.jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/4825 (9).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/5309 (7).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/2528 (7).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/3745 (6).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/3605 (10).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/0169 (10).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/4387 (3).jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/REAL/2810.jpg,0,cifake,cifar10,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/5367 (2).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/3012 (6).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/1569 (2).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission
+data/raw/cifake/archive/train/FAKE/4708 (2).jpg,1,cifake,stable_diffusion,sample,CIFAKE public Kaggle dataset; verify terms before submission

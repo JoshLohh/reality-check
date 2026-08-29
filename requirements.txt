@@ -1,0 +1,18 @@
+# Planned implementation dependencies. Installing these does not train anything.
+torch
+torchvision
+timm
+datasets
+huggingface_hub
+kaggle
+modelscope
+albumentations
+opencv-python
+Pillow
+numpy
+pandas
+scikit-learn
+matplotlib
+tqdm
+PyYAML
+rich

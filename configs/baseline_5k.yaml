@@ -1,0 +1,86 @@
+project:
+  name: reality-check
+  task: robust_aigc_image_detection
+  status: laptop_smoke_training
+  seed: 42
+
+data:
+  label_meaning:
+    0: authentic
+    1: aigc_generated
+  manifests:
+    train: data/manifests/train.csv
+    val: data/manifests/val.csv
+    test_clean: data/manifests/test_clean.csv
+    test_holdout: data/manifests/test_holdout.csv
+  input_size: 224
+  batch_size: 16
+  num_workers: 0
+
+model:
+  backbone: efficientnet_b0
+  pretrained: true
+  parameter_limit: "<2B"
+  classifier:
+    hidden_dim: null
+    dropout: 0.2
+    output: sigmoid_probability
+
+training:
+  enabled: true
+  note: "Small guarded laptop smoke run. Keep limits low on local hardware."
+  freeze_backbone: true
+  checkpoint_dir: checkpoints/baseline_5k
+  optimizer: adamw
+  learning_rate: 0.001
+  weight_decay: 0.01
+  max_epochs: 1
+  early_stopping_metric: val_roc_auc
+  class_balance: balanced_subset
+
+augmentation:
+  apply_same_policy_to_real_and_aigc: true
+  train_random:
+    jpeg_quality: [90, 70, 50, 30]
+    gaussian_blur_sigma: [0.5, 1.0, 2.0]
+    resize_downscale_then_upscale: [0.5, 0.25]
+    gaussian_noise_sigma: [0.02, 0.05, 0.10]
+    color_jitter_percent: 20
+    center_crop_percent: 80
+  eval_deterministic:
+    - clean
+    - jpeg_q90
+    - jpeg_q70
+    - jpeg_q50
+    - jpeg_q30
+    - blur_s0_5
+    - blur_s1_0
+    - blur_s2_0
+    - resize_0_5
+    - resize_0_25
+    - noise_s0_02
+    - noise_s0_05
+    - noise_s0_10
+    - color_jitter_20
+    - center_crop_80
+
+calibration:
+  method: temperature_scaling
+  fit_on: validation_only
+
+evaluation:
+  primary_metric: roc_auc
+  secondary_metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - brier_score
+  robust_score: "0.50 * auc_clean + 0.50 * mean_auc_transformed"
+  report_worst_condition_auc: true
+
+inference:
+  planned_script: scripts/predict.py
+  output_format:
+    - image_path
+    - pred
