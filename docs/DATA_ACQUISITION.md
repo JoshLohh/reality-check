@@ -97,13 +97,10 @@ Prerequisites:
 - Kaggle account
 - Kaggle API token at `~/.kaggle/kaggle.json`
 
-Planned command:
+Download command:
 
 ```bash
-kaggle datasets download \
-  -d birdy654/cifake-real-and-ai-generated-synthetic-images \
-  -p data/raw/cifake \
-  --unzip
+.venv/bin/python scripts/download_cifake.py
 ```
 
 Expected folder idea:
@@ -130,25 +127,22 @@ Prerequisites:
 pip install datasets huggingface_hub
 ```
 
-Planned inspection command:
+Preparation command (streams data, keeps labels `0` and `1`, and excludes all
+label-`2` tampered examples):
 
 ```bash
-python - <<'PY'
-from datasets import load_dataset
-
-ds = load_dataset("saberzl/SID_Set", split="train", streaming=True)
-row = next(iter(ds))
-print(row.keys())
-print({k: row[k] for k in row.keys() if k != "image" and k != "mask"})
-PY
+.venv/bin/python scripts/prepare_sid_set.py \
+  --splits train val \
+  --max-per-label 5000
 ```
 
 Important:
 
-- Confirm the available splits before downloading a full local copy.
-- Confirm label meanings before manifesting.
-- Use label `0` and label `1` first.
-- Exclude label `2` from the first binary baseline.
+- The script uses `datasets.load_dataset("saberzl/SID_Set", split=..., streaming=True)`.
+- It saves retained images as RGB PNGs, so extension/encoding is not a label shortcut.
+- It produces `data/manifests/sid_set_train.csv` and `data/manifests/sid_set_val.csv`.
+- Increase `--max-per-label` gradually; `0` means no cap and may require substantial storage.
+- Add `--splits test` only if you have the dataset's test split access; do not use that output for training or tuning.
 
 ### Option C: WildFake From ModelScope
 

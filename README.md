@@ -83,11 +83,7 @@ python3 -m venv .venv
 2. Download CIFAKE into the expected local path:
 
 ```bash
-mkdir -p data/raw/cifake
-kaggle datasets download \
-  -d birdy654/cifake-real-and-ai-generated-synthetic-images \
-  -p data/raw/cifake \
-  --unzip
+.venv/bin/python scripts/download_cifake.py
 ```
 
 Expected folders:
@@ -123,6 +119,35 @@ checkpoints/baseline_5k/best.pt
 ```
 
 The checkpoint is ignored by git, so teammates either regenerate it or receive it separately if the hackathon submission process requires sharing model weights.
+
+## SID_Set binary data and training
+
+The SID_Set preparation command follows the Hugging Face `load_dataset` pattern,
+streams by default, and keeps only `0 = real` and `1 = full synthetic`. It
+intentionally excludes `2 = tampered` rather than relabelling it as AIGC.
+
+```bash
+.venv/bin/python scripts/prepare_sid_set.py --splits train val --max-per-label 5000
+```
+
+Check the generated manifests before training:
+
+```bash
+.venv/bin/python scripts/train.py --config configs/sid_set.yaml --dry-run
+```
+
+When the manifests look correct, set `training.enabled: true` in
+`configs/sid_set.yaml`, then launch an explicit training run:
+
+```bash
+.venv/bin/python scripts/train.py \
+  --config configs/sid_set.yaml \
+  --allow-training \
+  --max-epochs 15
+```
+
+The SID config uses source/label-balanced sampling and stochastic mixed
+training views. Evaluation remains separate: never train on the test manifest.
 
 ## Proposed Technical Approach
 

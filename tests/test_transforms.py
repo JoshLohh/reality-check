@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 import sys
 import unittest
 from pathlib import Path
@@ -10,7 +11,11 @@ from PIL import Image
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from reality_check.transforms import EVAL_TRANSFORMS, apply_named_transform
+from reality_check.transforms import (
+    EVAL_TRANSFORMS,
+    apply_named_transform,
+    apply_random_training_transform,
+)
 
 
 class TransformTests(unittest.TestCase):
@@ -36,6 +41,13 @@ class TransformTests(unittest.TestCase):
     def test_unknown_transform_raises_clear_error(self) -> None:
         with self.assertRaisesRegex(ValueError, "Unknown transform"):
             apply_named_transform(self.image, "not_a_real_condition")
+
+    def test_training_transform_can_keep_an_image_clean(self) -> None:
+        output, name = apply_random_training_transform(
+            self.image, random.Random(42), clean_probability=1.0
+        )
+        self.assertEqual(name, "clean")
+        np.testing.assert_array_equal(np.asarray(output), np.asarray(self.image))
 
 
 if __name__ == "__main__":

@@ -158,8 +158,29 @@ def apply_random_training_transform(
     image: Image.Image,
     rng: random.Random,
     condition_names: tuple[str, ...] = EVAL_TRANSFORMS,
+    clean_probability: float = 0.30,
+    double_transform_probability: float = 0.20,
 ) -> tuple[Image.Image, str]:
-    """Sample and apply one robustness transform for training."""
+    """Sample a clean, single-transform, or two-transform training view.
 
-    name = rng.choice(condition_names)
-    return apply_named_transform(image, name), name
+    The same policy is applied regardless of class label. Keeping clean views
+    prevents the robust model from being trained only on degraded images.
+    """
+
+    if not 0 <= clean_probability <= 1:
+        raise ValueError("clean_probability must be between 0 and 1")
+    if not 0 <= double_transform_probability <= 1:
+        raise ValueError("double_transform_probability must be between 0 and 1")
+
+    available = tuple(name for name in condition_names if name != "clean")
+    if not available:
+        return ensure_rgb(image), "clean"
+    if rng.random() < clean_probability:
+        return ensure_rgb(image), "clean"
+
+    first = rng.choice(available)
+    transformed = apply_named_transform(image, first)
+    if rng.random() < double_transform_probability:
+        second = rng.choice(available)
+        return apply_named_transform(transformed, second), f"{first}+{second}"
+    return transformed, first

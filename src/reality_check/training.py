@@ -175,6 +175,12 @@ class TorchManifestDataset:
         self.image_size = image_size
         self.training = training
         self.seed = seed
+        self.epoch = 0
+
+    def set_epoch(self, epoch: int) -> None:
+        """Set the deterministic augmentation epoch for fresh training views."""
+
+        self.epoch = epoch
 
     def __len__(self) -> int:
         return len(self.records)
@@ -185,7 +191,7 @@ class TorchManifestDataset:
         with Image.open(record.image_path) as image:
             rgb = ensure_rgb(image)
             if self.training:
-                rng = random.Random(self.seed + index + int(time.time() // 60))
+                rng = random.Random(self.seed + self.epoch * 1_000_003 + index)
                 transformed, _ = apply_random_training_transform(rgb, rng)
             else:
                 transformed = rgb
@@ -215,6 +221,18 @@ def select_records(records: list[ManifestRecord], limit: int | None) -> list[Man
         return selected[:limit]
 
     return records[:limit]
+
+
+def source_label_sample_weights(records: list[ManifestRecord]) -> list[float]:
+    """Weight source/label groups equally to reduce dataset-origin shortcuts."""
+
+    if not records:
+        return []
+    group_counts: dict[tuple[str, int], int] = {}
+    for record in records:
+        key = (record.source_dataset, record.label)
+        group_counts[key] = group_counts.get(key, 0) + 1
+    return [1.0 / group_counts[(record.source_dataset, record.label)] for record in records]
 
 
 def resolve_device(torch: Any, requested: str) -> Any:
@@ -321,10 +339,18 @@ def run_training(
     val_dataset = TorchManifestDataset(
         val_records, image_size=plan.image_size, training=False, seed=seed
     )
+    sampler = None
+    if plan.class_balance == "source_label_sampler":
+        sampler = torch.utils.data.WeightedRandomSampler(
+            source_label_sample_weights(train_records),
+            num_samples=len(train_records),
+            replacement=True,
+        )
     train_loader = DataLoader(
         train_dataset,
         batch_size=plan.batch_size,
-        shuffle=True,
+        shuffle=sampler is None,
+        sampler=sampler,
         num_workers=plan.num_workers,
     )
     val_loader = DataLoader(
@@ -371,6 +397,7 @@ def run_training(
 
     for epoch in range(1, epochs + 1):
         epoch_start = time.time()
+        train_dataset.set_epoch(epoch)
         train_loss = run_one_epoch(model, train_loader, criterion, optimizer, device)
         metrics = validate(model, val_loader, criterion, device)
         row: dict[str, float | int] = {

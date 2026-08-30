@@ -1,0 +1,36 @@
+project:
+  name: reality-check
+  task: robust_aigc_image_detection
+  status: sid_set_binary_baseline
+  seed: 42
+
+data:
+  label_meaning:
+    0: authentic
+    1: aigc_generated
+  manifests:
+    train: data/manifests/sid_set_train.csv
+    val: data/manifests/sid_set_val.csv
+    test_clean: data/manifests/sid_set_test_clean.csv
+  input_size: 224
+  batch_size: 16
+  num_workers: 0
+
+model:
+  backbone: efficientnet_b0
+  pretrained: true
+  parameter_limit: "<2B"
+  classifier:
+    dropout: 0.2
+
+training:
+  enabled: false
+  note: "Set enabled true only after checking the two generated SID_Set manifests."
+  freeze_backbone: false
+  checkpoint_dir: checkpoints/sid_set
+  optimizer: adamw
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  max_epochs: 15
+  early_stopping_metric: val_roc_auc
+  class_balance: source_label_sampler

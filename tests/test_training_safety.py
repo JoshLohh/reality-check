@@ -11,7 +11,9 @@ from reality_check.training import (
     TrainingSafetyError,
     build_training_plan,
     enforce_training_safety,
+    source_label_sample_weights,
 )
+from reality_check.dataset import ManifestRecord
 
 
 def base_config(enabled: bool = False) -> dict:
@@ -60,7 +62,14 @@ class TrainingSafetyTests(unittest.TestCase):
         self.assertEqual(plan.image_size, 224)
         self.assertEqual(plan.model.backbone, "efficientnet_b0")
 
+    def test_source_label_sampler_equalizes_dataset_label_groups(self) -> None:
+        records = [
+            ManifestRecord(Path("a.jpg"), 0, "a", "real", "train", "test"),
+            ManifestRecord(Path("b.jpg"), 0, "a", "real", "train", "test"),
+            ManifestRecord(Path("c.jpg"), 1, "a", "fake", "train", "test"),
+        ]
+        self.assertEqual(source_label_sample_weights(records), [0.5, 0.5, 1.0])
+
 
 if __name__ == "__main__":
     unittest.main()
-
