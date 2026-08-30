@@ -24,9 +24,9 @@ model:
     dropout: 0.2
 
 training:
-  enabled: false
+  enabled: true
   note: "Set enabled true only after checking the two generated SID_Set manifests."
-  freeze_backbone: false
+  freeze_backbone: true
   checkpoint_dir: checkpoints/sid_set
   optimizer: adamw
   learning_rate: 0.0001
