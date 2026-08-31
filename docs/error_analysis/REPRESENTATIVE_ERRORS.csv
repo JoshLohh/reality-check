@@ -1,0 +1,9 @@
+index,kind,truth,score,title,finding
+0001911,False positive,Authentic,0.771,Polished product photograph,"Glossy surfaces, controlled studio lighting and a dark background resemble a 3D render."
+0001445,False positive,Authentic,0.793,Heavily processed interior,HDR-like processing and motion ghosting make an authentic kitchen image appear synthetic.
+0011402,False positive,Authentic,0.805,Edited food photograph,"Text overlay, framing and shallow focus suggest sensitivity to social-media editing styles."
+0008357,False positive,Authentic,0.766,Distant wildlife photograph,"A small subject, haze and repetitive water texture provide few strong natural-image cues."
+0005915,False negative,AI-generated,0.201,Photorealistic street/product scene,Convincing reflections and depth of field hide synthetic cues; malformed small text is missed.
+0012948,False negative,AI-generated,0.228,Vehicle product photograph,"Coherent shadows, reflections and familiar branding strongly resemble a genuine photograph."
+0003177,False negative,AI-generated,0.252,Familiar road sign,"Readable text, familiar geometry and camera-like background blur make this generation convincing."
+0005781,False negative,AI-generated,0.252,Whimsical studio object,"The subject is unusual, but realistic material texture and studio lighting dominate the model's decision."
