@@ -24,7 +24,8 @@ The core output format will be:
 ]
 ```
 
-`pred` means the calibrated probability that the image is AIGC-generated. Higher is more likely AI-generated.
+`pred` is the model's sigmoid AI score. Higher is more likely AI-generated;
+the current prototype does not apply explicit probability calibration.
 
 ## Current Baseline
 
@@ -58,6 +59,24 @@ Recorded local runs:
 | baseline 5k robustness sample | 200 balanced test images per condition | clean AUC 0.9318, mean transformed AUC 0.8633 | worst condition: `blur_s2_0` |
 
 See [docs/EXPERIMENT_LOG.md](docs/EXPERIMENT_LOG.md) and [docs/CURRENT_STATUS.md](docs/CURRENT_STATUS.md).
+
+## Robustness and Error Analysis
+
+The submission-ready analysis is available in
+[docs/error_analysis](docs/error_analysis/README.md). It includes the detailed
+technical note, a concise Devpost version, representative false-positive and
+false-negative images, and the supporting condition-level CSV tables.
+
+| Evaluation set | Clean AUC | Mean robust AUC | Worst transformed condition |
+| --- | ---: | ---: | --- |
+| SID_Set | 0.9750 | 0.9706 | noise sigma 0.10: 0.9571 |
+| CIFAKE | 0.8750 | 0.8080 | blur sigma 2.0: 0.6666 |
+| WildFake diagnostic slice | 0.4766 | 0.4145 | noise sigma 0.05: 0.2908 |
+
+The WildFake number is treated as a diagnostic rather than a broad benchmark:
+the evaluated slice contains only AFHQ authentic images and DDIM fakes and has
+997 unique paths among 1,000 rows. See the full report for interpretation and
+limitations.
 
 ## Setup
 
@@ -329,8 +348,8 @@ To intentionally start training later, the config must set `training.enabled: tr
 - [ ] Public GitHub repo with structured code
 - [ ] Inference script that outputs `image_path` and `pred`
 - [ ] README with setup, reproduction, limitations, and team contributions
-- [ ] Compact robustness evaluation table
-- [ ] Error analysis note
+- [x] Compact robustness evaluation table
+- [x] Error analysis note
 - [ ] Devpost written description
 - [ ] 2-4 minute public YouTube demo video
 
