@@ -17,9 +17,6 @@ data/raw/*
 data/processed/*
 !data/processed/.gitkeep
 
-checkpoints/*
-!checkpoints/.gitkeep
-*.pt
 *.pth
 *.ckpt
 
