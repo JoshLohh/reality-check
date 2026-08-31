@@ -215,3 +215,82 @@ Takeaway:
 - JPEG compression, color jitter, and center crop are relatively stable.
 - Strong blur and heavy downscale/upscale are the clearest weaknesses.
 - The next training improvement should focus on blur and resize robustness before changing model architecture.
+
+## SID_Set Frozen-Backbone Run 003
+
+Date: 2026-08-31
+
+Purpose:
+
+- Move beyond the low-resolution CIFAKE baseline with higher-resolution SID_Set images.
+- Train a laptop-manageable EfficientNet-B0 baseline with the same realistic random transformation policy used for robustness training.
+- Measure clean and transformed validation performance before attempting full backbone fine-tuning.
+
+Training command:
+
+```bash
+.venv/bin/python scripts/train.py \
+  --config configs/sid_set.yaml \
+  --allow-training \
+  --limit-train 5000 \
+  --limit-val 1000 \
+  --max-epochs 15 \
+  --device mps
+```
+
+Setup:
+
+- Dataset: SID_Set; labels `0 = real` and `1 = full synthetic`; label `2 = tampered` excluded.
+- Training subset: 5,000 balanced images (2,500 real, 2,500 synthetic).
+- Validation subset: 1,000 balanced images (500 real, 500 synthetic).
+- Model: pretrained EfficientNet-B0.
+- Backbone: frozen; 1,281 trainable classifier-head parameters out of 4,008,829 total parameters.
+- Device: Apple MPS.
+- Batch size: 16.
+- Epochs: 15.
+
+Best validation result:
+
+| Metric | Value |
+| --- | ---: |
+| Best epoch | 15 |
+| Validation loss | 0.2550 |
+| Validation ROC AUC | 0.9771 |
+| Validation accuracy | 0.9060 |
+| Validation precision | 0.9060 |
+| Validation recall | 0.9060 |
+| Validation F1 | 0.9060 |
+
+Robustness evaluation command:
+
+```bash
+.venv/bin/python scripts/evaluate_robustness.py \
+  --manifest data/manifests/sid_set_val.csv \
+  --checkpoint checkpoints/sid_set/best.pt \
+  --out-dir outputs/reports/sid_set_e15_robustness_1000 \
+  --limit 1000 \
+  --batch-size 16
+```
+
+Robustness summary:
+
+| Metric | Value |
+| --- | ---: |
+| Images per condition | 1,000 |
+| Clean ROC AUC | 0.9771 |
+| Mean transformed ROC AUC | 0.9728 |
+| Final score estimate | 0.9749 |
+| Worst condition | `noise_s0_10` |
+| Worst-condition ROC AUC | 0.9589 |
+
+Notes:
+
+- The model remained strong under JPEG compression, blur, resizing, color jitter, and center crop on this validation sample.
+- Heavy Gaussian noise reduced threshold-based accuracy and recall more than ROC AUC, suggesting calibration and threshold selection are worthwhile follow-up work.
+- This is a validation-based robustness result, not a final cross-generator test. Evaluate the checkpoint on a separate dataset such as CIFAKE test data or WildFake before making final generalization claims.
+
+Local artifacts:
+
+- Checkpoint: `checkpoints/sid_set/best.pt`
+- Training history: `checkpoints/sid_set/training_history.json`
+- Robustness report: `outputs/reports/sid_set_e15_robustness_1000/`
