@@ -71,7 +71,7 @@
           <h2 id="result-message">Likely AI-generated</h2>
           <p id="result-copy">Your image was assessed by the local Reality Check model.</p>
           <div class="meter"><span id="score-meter"></span></div>
-          <div class="score-line"><span>AI-generated probability</span><strong id="score-value">—</strong></div>
+          <div class="score-line"><span>Confidence assessment</span><strong id="score-value">—</strong></div>
         </section>
       </section>
       <footer>Images are analysed locally by the model running on this server.</footer>
@@ -84,6 +84,14 @@
       const image = document.querySelector('#preview-image');
       const name = document.querySelector('#preview-name');
       const result = document.querySelector('#result');
+
+      function assessmentFor(score) {
+        const percent = Math.round(score * 100);
+        if (percent <= 29) return 'High chance: real image';
+        if (percent <= 49) return 'Likely: real image';
+        if (percent <= 69) return 'Likely: AI-generated';
+        return 'High chance: AI-generated';
+      }
 
       function useFile(file) {
         if (!file || !file.type.startsWith('image/')) return;
@@ -113,8 +121,9 @@
           if (!response.ok) throw new Error(data.detail || 'The model could not analyse this image.');
           const score = data.ai_probability;
           document.querySelector('#score-meter').style.width = `${score * 100}%`;
-          document.querySelector('#score-value').textContent = `${Math.round(score * 100)}%`;
-          document.querySelector('#result-message').textContent = data.label;
+          const assessment = assessmentFor(score);
+          document.querySelector('#score-value').textContent = assessment;
+          document.querySelector('#result-message').textContent = assessment;
           document.querySelector('#result-badge').textContent = 'Model result';
           resultCopy.textContent = 'Your image was assessed by the local Reality Check model.';
           result.style.display = 'block';
