@@ -1,0 +1,35 @@
+project:
+  name: reality-check
+  task: robust_aigc_image_detection
+  status: sid80_cifake20_frozen_baseline  
+  seed: 42
+
+data:
+  label_meaning:
+    0: authentic
+    1: aigc_generated
+  manifests:
+    train: data/manifests/combined_train.csv
+    val: data/manifests/combined_val.csv
+  input_size: 224
+  batch_size: 16
+  num_workers: 0
+
+model:
+  backbone: efficientnet_b0
+  pretrained: true
+  parameter_limit: "<2B"
+  classifier:
+    dropout: 0.2
+
+training:
+  enabled: true
+  note: "80% SID_Set and 20% CIFAKE; no WildFake data used."
+  freeze_backbone: true
+  checkpoint_dir: checkpoints/sid80_cifake20
+  optimizer: adamw
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  max_epochs: 15
+  early_stopping_metric: val_roc_auc
+  class_balance: none
