@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reality Check — Metrics Dashboard</title>
+    <style>
+      :root { --bg:#0a0d14; --panel:#141a27; --line:#2a3449; --text:#f3f5fb; --muted:#9ba8c1; --accent:#8c7dff; --teal:#57ddc9; --red:#ff829a; }
+      * { box-sizing: border-box; } body { background: var(--bg); color: var(--text); font: 15px/1.45 Inter, ui-sans-serif, system-ui, sans-serif; margin: 0; }
+      main { margin: 0 auto; max-width: 1250px; padding: 45px 28px 70px; } .brand { color:var(--muted); font-size:.88rem; font-weight:800; letter-spacing:.08em; } .brand::before { background:var(--accent); border-radius:50%; content:""; display:inline-block; height:9px; margin:0 9px 1px 0; width:9px; }
+      .eyebrow { color:var(--teal); font-size:.75rem; font-weight:800; letter-spacing:.13em; margin-top:50px; text-transform:uppercase; } h1 { font-size:clamp(2.2rem, 5vw, 3.7rem); letter-spacing:-.06em; line-height:1; margin:10px 0 12px; } .intro { color:var(--muted); font-size:1.04rem; margin:0 0 32px; }
+      .cards { display:grid; gap:15px; grid-template-columns:repeat(4, 1fr); } .card { background:linear-gradient(135deg,#171e2d,#111622); border:1px solid var(--line); border-radius:16px; padding:19px; } .card label { color:var(--muted); display:block; font-size:.72rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase; } .card strong { display:block; font-size:2.05rem; letter-spacing:-.06em; margin:7px 0 3px; } .card span { color:var(--teal); font-size:.82rem; } .card.worst span { color:#ffc66b; }
+      .section-head { align-items:end; display:flex; justify-content:space-between; gap:20px; margin:44px 0 15px; } h2 { font-size:1.4rem; letter-spacing:-.035em; margin:0; } .note { color:var(--muted); font-size:.87rem; margin:0; }
+      .chart { align-items:end; background:var(--panel); border:1px solid var(--line); border-radius:17px; display:flex; gap:11px; height:265px; overflow-x:auto; padding:22px 22px 30px; } .bar-wrap { align-items:center; display:flex; flex:1 0 45px; flex-direction:column; height:100%; justify-content:end; min-width:45px; } .bar { background:linear-gradient(180deg,#a296ff,var(--accent)); border-radius:7px 7px 2px 2px; min-height:9px; transition:opacity .2s; width:100%; } .bar:hover { opacity:.7; } .bar-wrap small { color:var(--muted); font-size:.64rem; margin-top:8px; transform:rotate(-39deg); white-space:nowrap; }
+      .controls { align-items:center; display:flex; gap:10px; } input { background:#111722; border:1px solid #3a455d; border-radius:9px; color:var(--text); font:inherit; outline:none; padding:9px 11px; } input:focus { border-color:var(--accent); }
+      .table-wrap { background:var(--panel); border:1px solid var(--line); border-radius:17px; overflow:auto; } table { border-collapse:collapse; min-width:840px; width:100%; } th { background:#192131; color:#c9d0e1; font-size:.75rem; letter-spacing:.05em; padding:15px 18px; text-align:right; text-transform:uppercase; } th:first-child, td:first-child { text-align:left; } td { border-top:1px solid var(--line); color:#e4e7f0; padding:14px 18px; text-align:right; } tr:hover td { background:#1a2130; } td:first-child { font-weight:700; } .positive { color:var(--red); } .negative { color:var(--teal); }
+      footer { color:#72809c; font-size:.8rem; margin-top:19px; text-align:center; } @media(max-width:850px){ .cards{grid-template-columns:repeat(2,1fr);} } @media(max-width:480px){ main{padding:30px 16px 50px}.cards{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column;margin-top:34px}.controls,input{width:100%} }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand">REALITY CHECK</div>
+      <div class="eyebrow">Evaluation dashboard</div>
+      <h1>Robustness at a glance.</h1>
+      <p class="intro">Performance across clean images and the real-world changes your detector needs to survive.</p>
+      <section class="cards">
+        <article class="card"><label>Clean ROC AUC</label><strong>0.962</strong><span>Baseline discrimination</span></article>
+        <article class="card"><label>Mean robust AUC</label><strong>0.958</strong><span>Across 14 conditions</span></article>
+        <article class="card"><label>Final score</label><strong>0.960</strong><span>50% clean · 50% robust</span></article>
+        <article class="card worst"><label>Largest AUC drop</label><strong>0.020</strong><span>noise_s0_10</span></article>
+      </section>
+      <div class="section-head"><div><h2>AUC resilience by condition</h2><p class="note">Higher is better · bars show ROC AUC</p></div></div>
+      <section class="chart" id="chart" aria-label="ROC AUC bar chart"></section>
+      <div class="section-head"><div><h2>Detailed evaluation</h2><p class="note">1,000 images evaluated per condition</p></div><div class="controls"><input id="filter" type="search" placeholder="Filter conditions" aria-label="Filter conditions" /></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Condition</th><th>Count</th><th>ROC AUC</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>AUC drop vs clean</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <footer>Evaluation snapshot · decision threshold 0.50</footer>
+    </main>
+    <script>
+      const metrics = [
+        ['clean',1000,.9624,.8900,.8854,.8960,.8907,.0000], ['jpeg_q90',1000,.9617,.8880,.8911,.8840,.8876,.0007], ['jpeg_q70',1000,.9575,.8850,.8953,.8720,.8835,.0049], ['jpeg_q50',1000,.9546,.8770,.8887,.8620,.8751,.0078], ['jpeg_q30',1000,.9454,.8660,.8812,.8460,.8633,.0171], ['blur_s0_5',1000,.9626,.8930,.8922,.8940,.8931,-.0002], ['blur_s1_0',1000,.9617,.8970,.8962,.8980,.8971,.0008], ['blur_s2_0',1000,.9588,.8920,.8904,.8940,.8922,.0037], ['resize_0_5',1000,.9624,.8930,.8907,.8960,.8933,.0001], ['resize_0_25',1000,.9621,.9000,.8906,.9120,.9012,.0003], ['noise_s0_02',1000,.9612,.8830,.9083,.8520,.8793,.0013], ['noise_s0_05',1000,.9522,.8580,.9324,.7720,.8446,.0103], ['noise_s0_10',1000,.9424,.8220,.9351,.6920,.7954,.0200], ['color_jitter_20',1000,.9605,.8850,.8738,.9000,.8867,.0019], ['center_crop_80',1000,.9641,.8940,.9020,.8840,.8929,-.0017]
+      ];
+      const chart = document.querySelector('#chart'), rows = document.querySelector('#rows');
+      metrics.forEach(([condition,,auc]) => { const item = document.createElement('div'); item.className='bar-wrap'; item.innerHTML=`<div class="bar" title="${condition}: ${auc.toFixed(4)}" style="height:${auc * 100}%"></div><small>${condition.replaceAll('_',' ')}</small>`; chart.append(item); });
+      function render(filter = '') { rows.innerHTML = metrics.filter(row => row[0].includes(filter.toLowerCase())).map(row => { const drop = row[7]; return `<tr><td>${row[0]}</td><td>${row[1].toLocaleString()}</td>${row.slice(2,7).map(n => `<td>${n.toFixed(4)}</td>`).join('')}<td class="${drop > 0 ? 'positive' : 'negative'}">${drop.toFixed(4)}</td></tr>`; }).join(''); }
+      render(); document.querySelector('#filter').addEventListener('input', event => render(event.target.value));
+    </script>
+  </body>
+</html>

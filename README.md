@@ -67,6 +67,25 @@ python3 -m venv .venv
 .venv/bin/python -m unittest discover -s tests
 ```
 
+## Run the image upload demo
+
+The web UI is ready to use with a model checkpoint trained by this repository.
+Copy one `.pt` file into `checkpoints/` (for example `checkpoints/best.pt`), then
+start the local server:
+
+```bash
+.venv/bin/uvicorn server:app --host 0.0.0.0 --port 8000
+```
+
+Open [http://localhost:8000](http://localhost:8000). The server automatically
+loads the checkpoint, and the browser uploads images to `/api/predict` for
+inference. If more than one checkpoint is present, name the intended one
+`checkpoints/best.pt`.
+
+The checkpoint must use the same EfficientNet-B0 architecture defined in
+`src/reality_check/model.py`; a `.pt` file from an unrelated architecture needs
+its matching model definition instead.
+
 Downloaded datasets, generated predictions, evaluation reports, and model checkpoints are intentionally ignored by git.
 
 ## Teammate Setup
